@@ -23,3 +23,24 @@ it('should login a user using email and password', function () {
             ],
         ]);
 });
+
+it('should return an error if the email or password is incorrect', function () {
+    $email = fake()->safeEmail();
+
+    $payload = [
+        'email' => $email,
+        'password' => 'wrong_password',
+    ];
+
+    $response = $this->postJson(route('api.auth.login'), $payload);
+
+    $response
+        ->assertUnauthorized()
+        ->assertJsonFragment([
+            'errors' => [
+                'email' => [
+                    'Authentication failed. Please check your credentials and try again.',
+                ],
+            ],
+        ]);
+});
