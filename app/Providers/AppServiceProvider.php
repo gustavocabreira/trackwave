@@ -45,6 +45,5 @@ final class AppServiceProvider extends ServiceProvider
     private function configureModels(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
-        Model::unguard();
     }
 }

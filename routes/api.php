@@ -1,8 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::name('api.')->group(function () {
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::post('register', [RegisterController::class, 'store'])->name('register');
+    });
+});
