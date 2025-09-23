@@ -20,7 +20,6 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureCommands();
         $this->configureModels();
         $this->configureDates();
-        $this->bindConsistentHasher();
     }
 
     /**
