@@ -58,7 +58,8 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "./vendor/bin/pest --parallel",
+            "./vendor/bin/pint --test"
         ]
     },
     "extra": {
