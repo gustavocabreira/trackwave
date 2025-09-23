@@ -71,3 +71,38 @@ it('should return an error if the email is already taken', function () {
 
     $this->assertDatabaseCount($model->getTable(), 1);
 });
+
+it('should return an error if the password is not confirmed', function () {
+    $model = new User();
+
+    $password = 'P@ssw0rd123';
+
+    $payload = [
+        'name' => fake()->name(),
+        'email' => fake()->safeEmail(),
+        'password' => $password,
+        'password_confirmation' => 'wrong_password',
+    ];
+
+    $response = $this->postJson(route('api.auth.register'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonFragment([
+            'errors' => [
+                'password' => [
+                    'The password field confirmation does not match.',
+                ],
+                'password_confirmation' => [
+                    'The password confirmation field must match password.',
+                ],
+            ],
+        ]);
+
+    $this->assertDatabaseMissing($model->getTable(), [
+        'name' => $payload['name'],
+        'email' => $payload['email'],
+    ]);
+
+    $this->assertDatabaseCount($model->getTable(), 0);
+});
