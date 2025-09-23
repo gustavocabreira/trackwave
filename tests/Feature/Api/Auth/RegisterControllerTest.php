@@ -35,3 +35,39 @@ it('should register a user using email and password', function () {
         'email' => $payload['email'],
     ]);
 });
+
+it('should return an error if the email is already taken', function () {
+    $model = new User();
+
+    $email = fake()->safeEmail();
+
+    User::factory()->create(['email' => $email]);
+
+    $password = 'P@ssw0rd123';
+
+    $payload = [
+        'name' => fake()->name(),
+        'email' => $email,
+        'password' => $password,
+        'password_confirmation' => $password,
+    ];
+
+    $response = $this->postJson(route('api.auth.register'), $payload);
+
+    $response
+        ->assertStatus(422)
+        ->assertJsonFragment([
+            'errors' => [
+                'email' => [
+                    'The email has already been taken.',
+                ],
+            ],
+        ]);
+
+    $this->assertDatabaseMissing($model->getTable(), [
+        'name' => $payload['name'],
+        'email' => $payload['email'],
+    ]);
+
+    $this->assertDatabaseCount($model->getTable(), 1);
+});
