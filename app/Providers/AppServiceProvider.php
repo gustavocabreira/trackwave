@@ -20,7 +20,6 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureCommands();
         $this->configureModels();
         $this->configureDates();
-        $this->bindConsistentHasher();
     }
 
     /**
@@ -46,6 +45,5 @@ final class AppServiceProvider extends ServiceProvider
     private function configureModels(): void
     {
         Model::shouldBeStrict(! $this->app->isProduction());
-        Model::unguard();
     }
 }
