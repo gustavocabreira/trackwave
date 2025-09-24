@@ -31,7 +31,7 @@ cp .env.example .env
 
 sed -i "s|app_name|$APP_NAME|g" .env
 
-./set_storage.sh
+#./set_storage.sh
 
 # docker compose stop
 docker compose up -d --build
