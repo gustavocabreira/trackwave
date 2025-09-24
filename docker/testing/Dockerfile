@@ -49,8 +49,8 @@ RUN echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name 'xdebug.so'
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN addgroup -g ${GROUP_ID} laravel \
-    && adduser -u ${USER_ID} -G laravel -s /bin/sh -D laravel \
+RUN addgroup -g 1001 laravel \
+    && adduser -u 1001 -G laravel -s /bin/sh -D laravel \
     && echo "laravel:password1234" | chpasswd
 
 RUN apk add --no-cache sudo \
