@@ -50,7 +50,7 @@ docker compose exec --user root -T laravel sh -lc '
 docker compose cp .env laravel:/var/www/.env
 
 # instala deps e inicializa (sem -it para scripts não interativos)
-docker compose exec -T laravel composer install --no-interaction
+docker compose exec -T laravel composer update --no-interaction
 docker compose exec -T laravel php artisan key:generate --force
 docker compose exec -T laravel php artisan migrate --force
 docker compose exec -T laravel php artisan storage:link || true
