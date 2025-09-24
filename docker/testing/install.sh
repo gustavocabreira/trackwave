@@ -34,7 +34,7 @@ sed -i "s|app_name|$APP_NAME|g" .env
 ./set_storage.sh
 
 # docker compose stop
-docker compose up -d
+docker compose up -d --build
 
 # Wait for the Laravel container to be ready
 counter=0
