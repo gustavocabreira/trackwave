@@ -10,7 +10,6 @@ services:
                 - GROUP_ID=${GROUP_ID:-1001}
         volumes:
             - ../../:/var/www
-            - 'laravel_storage:/var/www/storage'
             - '/home/${HOST_USER}/.ssh:/home/laravel/.ssh'
             - ./supervisor.conf:/etc/supervisor.conf
         networks:
