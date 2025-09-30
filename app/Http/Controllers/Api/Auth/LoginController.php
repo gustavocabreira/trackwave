@@ -17,11 +17,6 @@ final class LoginController extends Controller
                 'message' => [
                     'Authentication failed. Please check your credentials and try again.',
                 ],
-                'errors' => [
-                    'email' => [
-                        'Authentication failed. Please check your credentials and try again.',
-                    ],
-                ],
             ];
 
             return response()->json($errorResponse, Response::HTTP_UNAUTHORIZED);
