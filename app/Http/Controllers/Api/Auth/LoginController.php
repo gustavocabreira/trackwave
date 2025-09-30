@@ -14,6 +14,9 @@ final class LoginController extends Controller
     {
         if (! auth()->attempt($request->validated())) {
             $errorResponse = [
+                'message' => [
+                    'Authentication failed. Please check your credentials and try again.',
+                ],
                 'errors' => [
                     'email' => [
                         'Authentication failed. Please check your credentials and try again.',
