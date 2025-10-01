@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RefreshVerificationTokenRequest;
 use App\Models\User;
 use App\Notifications\VerifyEmailNotification;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 final class RefreshVerificationTokenController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(RefreshVerificationTokenRequest $request)
     {
-        $validated = $request->validate([
-            'token' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $decryptedToken = decrypt($validated['token']);

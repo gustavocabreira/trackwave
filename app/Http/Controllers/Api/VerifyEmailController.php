@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,11 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 final class VerifyEmailController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(VerifyEmailRequest $request)
     {
-        $validated = $request->validate([
-            'token' => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
         try {
             $decryptedToken = decrypt($validated['token']);
