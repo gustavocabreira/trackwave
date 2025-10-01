@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -24,6 +25,11 @@ final class User extends Authenticatable
         'name',
         'email',
         'password',
+        'email_verified_at',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
     ];
 
     /**
@@ -35,6 +41,16 @@ final class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function verificationToken(): HasOne
+    {
+        return $this->hasOne(EmailVerificationToken::class)->orderBy('expires_at', 'desc');
+    }
+
+    public function verificationTokens(): HasMany
+    {
+        return $this->hasMany(EmailVerificationToken::class);
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->group(function () {
@@ -18,4 +19,6 @@ Route::name('api.')->group(function () {
         Route::get('me', fn () => request()->user())->name('me');
         Route::post('logout', LogoutController::class)->name('api.auth.logout');
     });
+
+    Route::post('user/verify-email', VerifyEmailController::class)->name('user.verify-email');
 });

@@ -3,8 +3,14 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 it('should register a user using email and password', function () {
+    Notification::fake();
+    Queue::fake();
+
     $model = new User();
 
     $password = 'P@ssw0rd123';
@@ -34,6 +40,8 @@ it('should register a user using email and password', function () {
         'name' => $payload['name'],
         'email' => $payload['email'],
     ]);
+
+    Notification::assertSentTo([User::find($response->json('data.id'))], VerifyEmailNotification::class);
 });
 
 it('should return an error if the email is already taken', function () {
