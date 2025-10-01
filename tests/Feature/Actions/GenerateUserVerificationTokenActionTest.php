@@ -6,6 +6,10 @@ use App\Actions\Auth\GenerateUserVerificationTokenAction;
 use App\Models\EmailVerificationToken;
 use App\Models\User;
 
+beforeEach(function () {
+    $this->freezeTime();
+});
+
 it('should generate a token', function () {
     $user = User::factory()->create();
 
