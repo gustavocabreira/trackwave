@@ -45,6 +45,7 @@ final class VerifyEmailNotification extends Notification
             ->toStringable();
 
         return (new MailMessage)
+            ->from('trackwave.dev@gmail.com', 'Trackwave')
             ->greeting('Welcome to the application!')
             ->line('Please, verify your email address by clicking on the link below:')
             ->action('Verify email', $url)
