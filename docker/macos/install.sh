@@ -1,100 +1,70 @@
 #!/bin/sh
-# bootstrap_macos.sh
-# Compatível com macOS (BSD sed, sem GNU getopt)
 set -e
 
-echo "Starting (macOS)…"
+echo "Starting..."
 
-# --- Checagens básicas ---
-if ! command -v docker >/dev/null 2>&1; then
-  echo "Erro: Docker não está instalado ou não está no PATH."
-  exit 1
-fi
+APP_NAME='laravel'
 
-# docker compose V2 (subcomando) é o padrão no macOS Desktop
-if ! docker compose version >/dev/null 2>&1; then
-  echo "Erro: 'docker compose' não está disponível. Atualize o Docker Desktop."
-  exit 1
-fi
-
-# --- Variáveis de ambiente úteis (opcional) ---
-export USER_ID="$(id -u)"
-export USER_GROUP="$(id -g)"
-export HOST_USER="$(whoami)"
-
-# Default
-APP_NAME="laravel"
-
-# --- Parse dos argumentos (sem GNU getopt) ---
-while [ $# -gt 0 ]; do
+# parse flags
+OPTIONS=$(getopt -o n: --long app-name: -- "$@") || { echo "Incorrect options"; exit 1; }
+eval set -- "$OPTIONS"
+while true; do
   case "$1" in
-    -n|--app-name)
-      if [ -n "${2:-}" ]; then
-        APP_NAME="$2"
-        shift 2
-      else
-        echo "Erro: falta o valor para $1"
-        exit 1
-      fi
-      ;;
+    -n|--app-name) APP_NAME="$2"; shift 2 ;;
     --) shift; break ;;
-    *)  # Ignora args desconhecidos (ou faça 'exit 1' se quiser estrito)
-      shift ;;
+    *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
 
-# --- Preparação do .env ---
-if [ ! -f .env ]; then
-  cp .env.example .env
+# prepara .env local e injeta APP_NAME
+cp -f .env.example .env
+
+# compatibilidade sed (macOS vs GNU)
+if sed --version >/dev/null 2>&1; then
+  sed -i "s|app_name|$APP_NAME|g" .env
+else
+  sed -i '' "s|app_name|$APP_NAME|g" .env
 fi
 
-# BSD sed (macOS) exige '' após -i
-# Substitui a string literal "app_name" pelo nome escolhido
-sed -i '' "s|app_name|$APP_NAME|g" .env
-
-# --- Storage/local setup ---
-if [ -x "./set_storage.sh" ]; then
-  ./set_storage.sh
-fi
-
-# --- Sobe containers ---
-# docker compose stop  # (opcional) pare antes de subir
+# sobe tudo (rebuilda a imagem da app caso mude USER_ID/GROUP_ID)
 docker compose up -d --build
 
-# --- Espera Laravel ficar pronto ---
+# espera container da app ter /var/www/artisan
 counter=0
-# Aguarda o arquivo /var/www/artisan existir no contêiner "laravel"
-# (ajuste o nome do serviço se for diferente no seu compose)
-while ! docker compose exec -T laravel test -f /var/www/artisan 2>/dev/null; do
-  echo "Waiting for Laravel container to be ready: ${counter}s"
-  sleep 5
-  counter=$((counter + 5))
+while ! docker compose exec -T laravel test -f /var/www/artisan; do
+  echo "Waiting Laravel container: ${counter}s"
+  sleep 5; counter=$((counter+5))
 done
-echo "Laravel container is ready after $counter seconds."
+echo "Laravel container is ready after $counter s."
 
-# --- Espera Banco ficar pronto ---
-# Ajuste o serviço e a mensagem de log conforme sua imagem (ex.: MySQL/MariaDB)
-# Para MySQL oficial, "ready for connections" aparece no log do mysqld
-until docker compose logs mysql 2>/dev/null | grep -q "ready for connections"; do
-  echo "Waiting Database setup… ${counter}s"
-  sleep 5
-  counter=$((counter + 5))
+# espera MySQL ficar pronto
+until docker compose logs mysql | grep -q "ready for connections"; do
+  echo "Waiting Database setup... ${counter}s"
+  sleep 5; counter=$((counter+5))
 done
-echo "Database is ready to use after $counter seconds."
+echo "Database is ready after $counter s."
 
-# --- Sincroniza .env (host <-> container) ---
-docker compose cp .env laravel:/var/www/
-docker compose cp laravel:/var/www/.env .env
+# garante dirs e permissões DENTRO do container
+docker compose exec --user root -T laravel sh -lc '
+  set -e
+  mkdir -p /var/www/storage/logs /var/www/bootstrap/cache
+  chown -R $(id -u laravel):$(id -g laravel) /var/www/storage /var/www/bootstrap
+  chmod -R ug+rwX /var/www/storage /var/www/bootstrap
+'
 
-# --- Instala dependências e prepara app ---
-docker compose exec -T laravel composer install
-docker compose exec -T laravel npm install
-docker compose exec -T laravel php artisan key:generate
-docker compose exec -T laravel php artisan migrate
-docker compose exec -T laravel npm i chokidar
-docker compose exec -T laravel php artisan storage:link
+# copia .env para dentro da app
+docker compose cp .env laravel:/var/www/.env
 
-# Reinicia apenas o serviço laravel para aplicar tudo
+# instala deps e inicializa
+docker compose exec -T laravel composer update --no-interaction
+docker compose exec -T laravel php artisan key:generate --force
+docker compose exec -T laravel php artisan migrate --force
+docker compose exec -T laravel php artisan storage:link || true
+
+# npm é opcional; evite -it
+docker compose exec -T laravel sh -lc 'command -v npm >/dev/null && npm install && npm i chokidar || true'
+
+# reinicia para pegar tudo pronto
 docker compose restart laravel
 
 echo "Started!"
