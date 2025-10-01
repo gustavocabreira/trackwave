@@ -12,15 +12,11 @@ final class LoginController extends Controller
 {
     public function store(LoginRequest $request)
     {
-        if (! auth()->attempt($request->validated())) {
-            $errorResponse = [
-                'message' => [
-                    'Authentication failed. Please check your credentials and try again.',
-                ],
-            ];
-
-            return response()->json($errorResponse, Response::HTTP_UNAUTHORIZED);
-        }
+        abort_if(
+            boolean: ! auth()->attempt($request->validated()),
+            code: 401,
+            message: 'Authentication failed. Please check your credentials and try again.',
+        );
 
         /** @var \App\Models\User $user */
         $user = auth()->user();

@@ -37,8 +37,6 @@ it('should return an error if the email or password is incorrect', function () {
     $response
         ->assertUnauthorized()
         ->assertJsonFragment([
-            'message' => [
-                'Authentication failed. Please check your credentials and try again.',
-            ],
+            'message' => 'Authentication failed. Please check your credentials and try again.',
         ]);
 });
