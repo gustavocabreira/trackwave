@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\RefreshVerificationTokenController;
 use App\Http\Controllers\Api\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,4 +22,5 @@ Route::name('api.')->group(function () {
     });
 
     Route::post('user/verify-email', VerifyEmailController::class)->name('user.verify-email');
+    Route::post('user/refresh-verification-token', RefreshVerificationTokenController::class)->name('user.refresh-verification-token');
 });

@@ -29,15 +29,17 @@ final class VerifyEmailController extends Controller
 
         [$userId, $expiresAt] = explode('|', $decryptedToken);
 
-        abort_if(now()->toDateTimeString() > $expiresAt, Response::HTTP_UNPROCESSABLE_ENTITY, 'The token has expired.');
-
         $user = User::findOrFail($userId);
+
+        abort_if($user->verificationToken->token !== $validated['token'], Response::HTTP_UNAUTHORIZED, 'The token is invalid.');
 
         abort_if(! is_null($user->verificationToken->used_at), Response::HTTP_UNAUTHORIZED, 'The token has already been used.');
 
         abort_if($user->email_verified_at, Response::HTTP_UNAUTHORIZED, 'The email has already been verified.');
 
         abort_if($user->verificationToken->token !== $validated['token'], Response::HTTP_UNAUTHORIZED, 'The token is invalid.');
+
+        abort_if($user->verificationToken->expires_at->isPast(), Response::HTTP_UNPROCESSABLE_ENTITY, 'The token has expired.');
 
         DB::transaction(function () use ($user) {
             $user->verificationToken()->update([

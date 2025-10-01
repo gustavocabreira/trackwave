@@ -18,8 +18,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class);
             $table->string('token');
-            $table->date('expires_at');
-            $table->date('used_at')->nullable();
+            $table->datetime('expires_at');
+            $table->datetime('used_at')->nullable();
             $table->timestamps();
         });
     }
