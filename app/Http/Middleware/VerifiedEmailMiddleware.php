@@ -18,9 +18,9 @@ class VerifiedEmailMiddleware
         if (is_null(request()->user()->email_verified_at)) {
             return response()->json([
                 'message' => 'The email has not been verified yet.',
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_FORBIDDEN);
         }
-        
+
         return $next($request);
     }
 }
