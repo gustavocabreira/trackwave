@@ -23,7 +23,7 @@ Route::name('api.')->group(function () {
                 Route::get('me', fn () => request()->user())->name('me');
             });
 
-        Route::post('logout', LogoutController::class)->name('api.auth.logout');
+        Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
     });
 
     Route::post('user/verify-email', VerifyEmailController::class)->name('user.verify-email');
