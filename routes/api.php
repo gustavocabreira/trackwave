@@ -17,7 +17,7 @@ Route::name('api.')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        
+
         Route::middleware(VerifiedEmailMiddleware::class)
             ->group(function () {
                 Route::get('me', fn () => request()->user())->name('me');
