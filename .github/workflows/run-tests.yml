@@ -24,16 +24,12 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
-        working-directory: ./backend
 
       - name: Generate .env
         run: cp .env.example .env
-        working-directory: ./backend
         
       - name: Generate key
         run: php artisan key:generate
-        working-directory: ./backend
 
       - name: Run tests
         run: composer test
-        working-directory: ./backend
