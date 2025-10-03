@@ -2,7 +2,7 @@ name: "Deploy para VPS"
 on:
   push:
     branches:
-      - main
+      - staging
 jobs:
   build_deploy:
     runs-on: ubuntu-latest
@@ -52,6 +52,6 @@ jobs:
           port: 22
           script: |
             cd /home/deploy/projects/trackwave
-            cp .env /home/deploy/projects/trackwave/docker/production/.env
-            cd /home/deploy/projects/trackwave/docker/production
+            cp .env /home/deploy/projects/trackwave/docker/staging/.env
+            cd /home/deploy/projects/trackwave/docker/staging
             sh install.sh --app-name=trackwave-api
