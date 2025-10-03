@@ -42,6 +42,7 @@ jobs:
           source: "."
           target: "/home/deploy/projects/trackwave"
           overwrite: true
+          rm: true
 
       - name: "Restarting Docker Container"
         uses: appleboy/ssh-action@v0.1.6
