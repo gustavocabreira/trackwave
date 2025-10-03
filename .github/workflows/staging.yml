@@ -1,0 +1,57 @@
+name: "Deploy para VPS"
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Baixar o código"
+        uses: actions/checkout@v4
+
+      - name: "Copy .env.example to .env"
+        run: |
+          cp .env.example .env
+
+      - name: "Update .env values"
+        run: |
+          sed -i "s#APP_KEY=.*#APP_KEY=${{ secrets.APP_KEY }}#" .env
+          sed -i "s#DB_CONNECTION=.*#DB_CONNECTION=${{ secrets.DB_CONNECTION }}#" .env
+          sed -i "s#DB_HOST=.*#DB_HOST=${{ secrets.DB_HOST }}#" .env
+          sed -i "s#DB_USERNAME=.*#DB_USERNAME=${{ secrets.DB_USERNAME }}#" .env
+          sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${{ secrets.DB_PASSWORD }}#" .env
+          sed -i "s#DB_DATABASE=.*#DB_DATABASE=${{ secrets.DB_DATABASE }}#" .env
+          sed -i "s#SANCTUM_STATEFUL_DOMAINS=.*#SANCTUM_STATEFUL_DOMAINS=${{ secrets.SANCTUM_STATEFUL_DOMAINS }}#" .env
+          sed -i "s#FRONTEND_URL=.*#FRONTEND_URL=${{ secrets.FRONTEND_URL }}#" .env
+          sed -i "s#MAIL_MAILER=.*#MAIL_MAILER=${{ secrets.MAIL_MAILER }}#" .env
+          sed -i "s#MAIL_HOST=.*#MAIL_HOST=${{ secrets.MAIL_HOST }}#" .env
+          sed -i "s#MAIL_PORT=.*#MAIL_PORT=${{ secrets.MAIL_PORT }}#" .env
+          sed -i "s#MAIL_USERNAME=.*#MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}#" .env
+          sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}#" .env
+					sed -i "s#MAIL_ENCRYPTION=.*#MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}#" .env
+					sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env					
+
+      - name: "Copiar arquivos para a VPS"
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "."
+          target: "/home/deploy/projects/trackwave"
+          overwrite: true
+					
+      - name: "Restarting Docker Container"
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/deploy/projects/trackwave
+            cp .env /home/deploy/projects/trackwave/docker/production/.env
+            cd /home/deploy/projects/trackwave/docker/production
+            sh install.sh --app-name=trackwave-api
