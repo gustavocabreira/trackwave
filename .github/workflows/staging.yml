@@ -30,7 +30,7 @@ jobs:
           sed -i "s#MAIL_USERNAME=.*#MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}#" .env
           sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}#" .env
           sed -i "s#MAIL_ENCRYPTION=.*#MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}#" .env
-          sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env					
+          sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env
 
       - name: "Copiar arquivos para a VPS"
         uses: appleboy/scp-action@v0.1.7
@@ -42,7 +42,7 @@ jobs:
           source: "."
           target: "/home/deploy/projects/trackwave"
           overwrite: true
-					
+
       - name: "Restarting Docker Container"
         uses: appleboy/ssh-action@v0.1.6
         with:
