@@ -1,0 +1,39 @@
+name: "Run tests"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+        working-directory: ./backend
+
+      - name: Generate .env
+        run: cp .env.example .env
+        working-directory: ./backend
+        
+      - name: Generate key
+        run: php artisan key:generate
+        working-directory: ./backend
+
+      - name: Run tests
+        run: composer test
+        working-directory: ./backend
