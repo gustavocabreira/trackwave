@@ -50,7 +50,6 @@ final class User extends Authenticatable
                 'organizations.id',
                 'organizations.name',
                 'organizations.slug',
-                'organizations.logo',
             ]);
     }
 

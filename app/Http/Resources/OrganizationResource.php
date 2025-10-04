@@ -20,6 +20,7 @@ final class OrganizationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
+            'owner' => $this->whenLoaded('owner', fn ($value) => $value->toArray($request)),
         ];
     }
 }
