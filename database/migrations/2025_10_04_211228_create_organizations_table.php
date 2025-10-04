@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'owner_id')->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'owner_id')->constrained('users')->cascadeOnDelete();
             $table->string('name', 50);
             $table->string('slug', 50)->unique();
             $table->timestamps();
@@ -25,9 +25,11 @@ return new class extends Migration
 
         Schema::create('organization_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Organization::class)->onDelete('cascade');
-            $table->foreignIdFor(User::class)->onDelete('cascade');
+            $table->foreignIdFor(Organization::class)->constrained('organizations')->cascadeOnDelete();
+            $table->foreignIdFor(User::class)->constrained('users')->cascadeOnDelete();
             $table->timestamps();
+            
+            $table->unique(['organization_id', 'user_id']);
         });
     }
 

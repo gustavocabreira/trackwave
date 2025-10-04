@@ -11,6 +11,7 @@ use App\Http\Requests\Organization\StoreOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 
 final class OrganizationController extends Controller
@@ -65,5 +66,21 @@ final class OrganizationController extends Controller
         $organization->update($request->validated());
 
         return new OrganizationResource($organization);
+    }
+
+    /**
+     * Delete an organization
+     */
+    public function destroy(Organization $organization)
+    {
+        Gate::authorize('delete', $organization);
+
+        $organization->delete();
+
+        User::query()->where('organization_id', $organization->id)->update([
+            'organization_id' => null,
+        ]);
+
+        return response()->noContent();
     }
 }
