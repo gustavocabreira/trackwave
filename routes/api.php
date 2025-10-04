@@ -23,7 +23,16 @@ Route::name('api.')->group(function () {
             ->group(function () {
                 Route::get('me', fn () => request()->user())->name('me');
 
-                Route::apiResource('organizations', OrganizationController::class);
+                Route::prefix('organizations')
+                    ->name('organizations')
+                    ->controller(OrganizationController::class)
+                    ->group(function () {
+                        Route::get('', 'index')->name('.index');
+                        Route::get('{organization}', 'show')->name('.show');
+                        Route::post('', 'store')->name('.store');
+                        Route::patch('{organization}', 'update')->name('.update');
+                        Route::delete('{organization}', 'destroy')->name('.destroy');
+                    });
             });
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');

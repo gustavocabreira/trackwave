@@ -12,7 +12,7 @@ it('should update the organization', function () {
 
     $payload = Organization::factory()->make(['owner_id' => $user->id])->toArray();
 
-    $response = $this->actingAs($user)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($user)->patchJson(route('api.organizations.update', [
         'organization' => $organization->id,
     ]), $payload);
 
@@ -55,7 +55,7 @@ it('should return unprocessable entity when payload is invalid', function (array
     $organization = Organization::factory()->create(['owner_id' => $user->id]);
     $user->organizations()->attach($organization);
 
-    $response = $this->actingAs($user)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($user)->patchJson(route('api.organizations.update', [
         'organization' => $organization->id,
     ]), $payload);
 
@@ -73,7 +73,7 @@ it('should return unprocessable entity when slug is already taken', function () 
 
     $payload = Organization::factory()->make(['owner_id' => $user->id, 'slug' => $organization->slug])->toArray();
 
-    $response = $this->actingAs($user)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($user)->patchJson(route('api.organizations.update', [
         'organization' => $organization->id,
     ]), $payload);
 
@@ -89,7 +89,7 @@ it('should return unprocessable entity when slug is already taken', function () 
 it('should return not found when trying to access a non-existing organization', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($user)->patchJson(route('api.organizations.update', [
         'organization' => str()->random(),
     ]), []);
 
@@ -100,7 +100,7 @@ it('should return forbidden when trying to update another user organization', fu
     $user = User::factory()->create();
     $organization = Organization::factory()->create();
 
-    $response = $this->actingAs($user)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($user)->patchJson(route('api.organizations.update', [
         'organization' => $organization->id,
     ]), []);
 
@@ -118,7 +118,7 @@ it('should return forbidden if the user is not the owner of the organization', f
     $user->organizations()->attach($organization);
     $anotherUser->organizations()->attach($organization);
 
-    $response = $this->actingAs($anotherUser)->putJson(route('api.organizations.update', [
+    $response = $this->actingAs($anotherUser)->patchJson(route('api.organizations.update', [
         'organization' => $organization->id,
     ]), []);
 
