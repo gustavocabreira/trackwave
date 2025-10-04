@@ -47,6 +47,9 @@ dataset('invalid_payload', [
     'invalid name' => [
         ['name' => ''], ['name' => ['The name field is required.']],
     ],
+    'name with less than 3 characters' => [
+        ['name' => str()->random(2)], ['name' => ['The name field must be at least 3 characters.']],
+    ],
     'name with more than 50 characters' => [
         ['name' => str()->random(51)], ['name' => ['The name field must not be greater than 50 characters.']],
     ],
