@@ -8,6 +8,7 @@ use App\Actions\Organization\CreateOrganizationAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\IndexOrganizationRequest;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
+use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Gate;
@@ -50,6 +51,18 @@ final class OrganizationController extends Controller
         Gate::authorize('view', $organization);
 
         $organization->load('owner');
+
+        return new OrganizationResource($organization);
+    }
+
+    /**
+     * Update a organization
+     */
+    public function update(Organization $organization, UpdateOrganizationRequest $request)
+    {
+        Gate::authorize('update', $organization);
+
+        $organization->update($request->validated());
 
         return new OrganizationResource($organization);
     }

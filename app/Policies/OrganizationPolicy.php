@@ -38,7 +38,7 @@ final class OrganizationPolicy
      */
     public function update(User $user, Organization $organization): bool
     {
-        return false;
+        return $organization->owner_id === $user->id;
     }
 
     /**
