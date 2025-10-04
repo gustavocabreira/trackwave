@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -10,15 +11,13 @@ class GoogleRegisterController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function callback()
     {
-        dd('here');
         try {
-            $googleUser = Socialite::driver('google')->user();
-
+            $googleUser = Socialite::driver('google')->stateless()->user();
             $user = User::where('google_id', $googleUser->getId())->first();
 
             if (!$user) {
@@ -30,12 +29,14 @@ class GoogleRegisterController extends Controller
                         'email' => $googleUser->getEmail(),
                         'google_id' => $googleUser->getId()
                     ]);
+                } else {
+                    $user->update(['google_id' => $googleUser->getId()]);
                 }
             }
 
-            dd($user);
-
-            return $user->toResource();
+            return view('auth.callback', [
+                'token' => $user->createToken('auth_token')->plainTextToken;
+            ]);
 
         } catch (\Throwable $t) {
             dd('Something went wrong! ' . $t->getMessage());
