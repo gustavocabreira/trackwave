@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Organization;
 use App\Models\User;
 
@@ -24,5 +26,20 @@ it('should return the organization', function () {
                     'name',
                 ],
             ],
+        ]);
+});
+
+it('should return forbidden when trying to access another user organization', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create();
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.show', [
+        'organization' => $organization->id,
+    ]));
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
         ]);
 });

@@ -10,6 +10,7 @@ use App\Http\Requests\Organization\IndexOrganizationRequest;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
+use Illuminate\Support\Facades\Gate;
 
 final class OrganizationController extends Controller
 {
@@ -46,7 +47,10 @@ final class OrganizationController extends Controller
      */
     public function show(Organization $organization)
     {
+        Gate::authorize('view', $organization);
+
         $organization->load('owner');
+
         return new OrganizationResource($organization);
     }
 }
