@@ -25,6 +25,9 @@ final class CreateOrganizationAction
         ]);
 
         auth()->user()->organizations()->attach($organization);
+        auth()->user()->update([
+            'organization_id' => $organization->id,
+        ]);
 
         return $organization;
     }

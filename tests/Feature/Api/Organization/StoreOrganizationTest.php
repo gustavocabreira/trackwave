@@ -36,6 +36,11 @@ it('should create a new organization', function () {
     ]);
 
     $this->assertDatabaseCount('organization_user', 1);
+
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'organization_id' => $response->json('data.id'),
+    ]);
 });
 
 dataset('invalid_payload', [
