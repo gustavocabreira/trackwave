@@ -12,9 +12,17 @@ final class OrganizationController extends Controller
 {
     public function store(StoreOrganizationRequest $request)
     {
+        $slug = $request->input('slug');
+
+        if($slug === null) {
+            $slug = now()->timestamp . '-' . str()->slug($request->string('name'));
+        }
+
+        $slug = str()->substr($slug, 0, 50);
+
         $organization = Organization::query()->create([
             'name' => $request->string('name'),
-            'slug' => $request->string('slug'),
+            'slug' => $slug,
             'owner_id' => auth()->user()->id,
         ]);
 

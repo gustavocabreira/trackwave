@@ -79,3 +79,22 @@ it('should return unprocessable entity when slug is already taken', function () 
             ],
         ]);
 });
+
+it('should generate a slug if not provided', function () {
+    $user = User::factory()->create();
+    $payload = Organization::factory()->make(['owner_id' => $user->id, 'slug' => null])->toArray();
+
+    $response = $this->actingAs($user)->postJson(route('api.organizations.store'), $payload);
+
+    $response->assertCreated();
+
+    expect(Organization::find($response->json('data.id'))->slug)->not->toBeNull();
+
+    $this->assertDatabaseHas('organizations', [
+        'name' => $payload['name'],
+        'slug' => $response->json('data.slug'),
+        'owner_id' => $user->id,
+    ]);
+
+    $this->assertDatabaseCount('organizations', 1);
+});
