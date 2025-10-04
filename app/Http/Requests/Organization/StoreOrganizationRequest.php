@@ -17,7 +17,7 @@ final class StoreOrganizationRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:50'],
-            'slug' => ['required', 'string', 'max:50', 'unique:organizations'],
+            'slug' => ['nullable', 'string', 'max:50', 'unique:organizations'],
         ];
     }
 }
