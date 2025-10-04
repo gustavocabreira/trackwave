@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Auth\GoogleRegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
@@ -14,13 +15,17 @@ Route::name('api.')->group(function () {
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('register', [RegisterController::class, 'store'])->name('register');
         Route::post('login', [LoginController::class, 'store'])->name('login');
+        Route::post('logout', LogoutController::class)->name('logout');
+
+        Route::get('google', [GoogleRegisterController::class, 'redirect'])->name('google-auth');
+        Route::get('google/callback', [GoogleRegisterController::class, 'callback'])->name('google-callback');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
         
         Route::middleware(VerifiedEmailMiddleware::class)
             ->group(function () {
-                Route::get('me', fn () => request()->user())->name('me');
+        Route::get('me', fn () => request()->user())->name('me');
             });
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
