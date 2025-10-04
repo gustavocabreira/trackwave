@@ -23,7 +23,7 @@ Route::name('api.')->group(function () {
             ->group(function () {
                 Route::get('me', fn () => request()->user())->name('me');
 
-                Route::apiResource('organizations', OrganizationController::class)->only('index', 'store');
+                Route::apiResource('organizations', OrganizationController::class)->only('index', 'store', 'show');
             });
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');

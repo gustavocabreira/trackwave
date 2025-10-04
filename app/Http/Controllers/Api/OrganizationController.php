@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\IndexOrganizationRequest;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
+use App\Models\Organization;
 
 final class OrganizationController extends Controller
 {
@@ -37,6 +38,15 @@ final class OrganizationController extends Controller
     {
         $organization = $action->execute($request->validated());
 
+        return new OrganizationResource($organization);
+    }
+
+    /**
+     * Show a organization
+     */
+    public function show(Organization $organization)
+    {
+        $organization->load('owner');
         return new OrganizationResource($organization);
     }
 }
