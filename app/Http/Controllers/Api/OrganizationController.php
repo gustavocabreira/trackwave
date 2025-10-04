@@ -17,7 +17,15 @@ final class OrganizationController extends Controller
      */
     public function index(IndexOrganizationRequest $request)
     {
-        $organizations = auth()->user()->organizations()->with('owner')->paginate(10);
+        $organizations = auth()
+            ->user()
+            ->organizations()
+            ->when($request->has('name'), function ($query) {
+                $name = request()->string('name');
+                $query->where('name', 'like', "%{$name}%");
+            })
+            ->with('owner')
+            ->paginate(10);
 
         return OrganizationResource::collection($organizations);
     }

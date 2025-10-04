@@ -84,3 +84,20 @@ it('should be able to paginate', function () {
         ->and($response->json('meta.to'))->toBe(15)
         ->and($response->json('meta.total'))->toBe(15);
 });
+
+it('should be able to filter by name', function () {
+    $user = User::factory()->create();
+    $organizations = Organization::factory()->count(15)->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organizations);
+
+    $anotherOrganization = Organization::factory()->create(['owner_id' => $user->id, 'name' => 'organization']);
+    $user->organizations()->attach($anotherOrganization);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.index', [
+        'name' => 'organization',
+    ]));
+
+    $response->assertOk()->assertJsonCount(1, 'data');
+
+    expect($response->json('data.0.name'))->toBe('organization');
+});

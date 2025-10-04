@@ -25,6 +25,7 @@ final class IndexOrganizationRequest extends FormRequest
     {
         return [
             'page' => ['sometimes', 'integer', 'min:1'],
+            'name' => ['sometimes', 'string'],
         ];
     }
 }
