@@ -25,7 +25,7 @@ final class OrganizationController extends Controller
                 $query->where('name', 'like', "%{$name}%");
             })
             ->with('owner')
-            ->paginate(10);
+            ->paginate($request->integer('per_page', 10));
 
         return OrganizationResource::collection($organizations);
     }
