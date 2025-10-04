@@ -37,6 +37,6 @@ final class OrganizationController extends Controller
     {
         $organization = $action->execute($request->validated());
 
-        return $organization->toResource();
+        return new OrganizationResource($organization);
     }
 }
