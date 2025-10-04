@@ -43,3 +43,13 @@ it('should return forbidden when trying to access another user organization', fu
             'message' => 'This action is unauthorized.',
         ]);
 });
+
+it('should return not found when trying to access a non-existing organization', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.show', [
+        'organization' => str()->random(),
+    ]));
+
+    $response->assertNotFound();
+});
