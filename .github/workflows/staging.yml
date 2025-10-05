@@ -14,6 +14,26 @@ jobs:
         run: |
           cp .env.example .env
 
+      - name: "Update .env values"
+        run: |
+          sed -i "s#APP_KEY=.*#APP_KEY=${{ secrets.APP_KEY }}#" .env
+          sed -i "s#DB_CONNECTION=.*#DB_CONNECTION=${{ secrets.DB_CONNECTION }}#" .env
+          sed -i "s#DB_HOST=.*#DB_HOST=${{ secrets.DB_HOST }}#" .env
+          sed -i "s#DB_USERNAME=.*#DB_USERNAME=${{ secrets.DB_USERNAME }}#" .env
+          sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${{ secrets.DB_PASSWORD }}#" .env
+          sed -i "s#DB_DATABASE=.*#DB_DATABASE=${{ secrets.DB_DATABASE }}#" .env
+          sed -i "s#SANCTUM_STATEFUL_DOMAINS=.*#SANCTUM_STATEFUL_DOMAINS=${{ secrets.SANCTUM_STATEFUL_DOMAINS }}#" .env
+          sed -i "s#FRONTEND_URL=.*#FRONTEND_URL=${{ secrets.FRONTEND_URL }}#" .env
+          sed -i "s#MAIL_MAILER=.*#MAIL_MAILER=${{ secrets.MAIL_MAILER }}#" .env
+          sed -i "s#MAIL_HOST=.*#MAIL_HOST=${{ secrets.MAIL_HOST }}#" .env
+          sed -i "s#MAIL_PORT=.*#MAIL_PORT=${{ secrets.MAIL_PORT }}#" .env
+          sed -i "s#MAIL_USERNAME=.*#MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}#" .env
+          sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}#" .env
+          sed -i "s#MAIL_ENCRYPTION=.*#MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}#" .env
+          sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env
+          sed -i "s#GOOGLE_CLIENT_ID=.*#GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}#" .env
+          sed -i "s#GOOGLE_CLIENT_SECRET=.*#GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}#" .env
+
       - name: "Copiar arquivos para a VPS"
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -38,23 +58,3 @@ jobs:
             cp .env /home/deploy/projects/trackwave/docker/staging/.env
             cd /home/deploy/projects/trackwave/docker/staging
             sh install.sh --app-name=trackwave-api
-
-      - name: "Update .env values"
-        run: |
-          sed -i "s#APP_KEY=.*#APP_KEY=${{ secrets.APP_KEY }}#" .env
-          sed -i "s#DB_CONNECTION=.*#DB_CONNECTION=${{ secrets.DB_CONNECTION }}#" .env
-          sed -i "s#DB_HOST=.*#DB_HOST=${{ secrets.DB_HOST }}#" .env
-          sed -i "s#DB_USERNAME=.*#DB_USERNAME=${{ secrets.DB_USERNAME }}#" .env
-          sed -i "s#DB_PASSWORD=.*#DB_PASSWORD=${{ secrets.DB_PASSWORD }}#" .env
-          sed -i "s#DB_DATABASE=.*#DB_DATABASE=${{ secrets.DB_DATABASE }}#" .env
-          sed -i "s#SANCTUM_STATEFUL_DOMAINS=.*#SANCTUM_STATEFUL_DOMAINS=${{ secrets.SANCTUM_STATEFUL_DOMAINS }}#" .env
-          sed -i "s#FRONTEND_URL=.*#FRONTEND_URL=${{ secrets.FRONTEND_URL }}#" .env
-          sed -i "s#MAIL_MAILER=.*#MAIL_MAILER=${{ secrets.MAIL_MAILER }}#" .env
-          sed -i "s#MAIL_HOST=.*#MAIL_HOST=${{ secrets.MAIL_HOST }}#" .env
-          sed -i "s#MAIL_PORT=.*#MAIL_PORT=${{ secrets.MAIL_PORT }}#" .env
-          sed -i "s#MAIL_USERNAME=.*#MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}#" .env
-          sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}#" .env
-          sed -i "s#MAIL_ENCRYPTION=.*#MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}#" .env
-          sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env
-          sed -i "s#GOOGLE_CLIENT_ID=.*#GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}#" .env
-          sed -i "s#GOOGLE_CLIENT_SECRET=.*#GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}#" .env
