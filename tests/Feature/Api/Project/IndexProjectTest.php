@@ -114,3 +114,21 @@ it('should be able to paginate the project list', function () {
         ->and($response->json('meta.to'))->toBe(15)
         ->and($response->json('meta.total'))->toBe(15);
 });
+
+it('should be able to filter the project list by name', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    Project::factory()->count(15)->create(['organization_id' => $organization->id, 'user_id' => $user->id]);
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'project']);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'name' => 'project',
+    ]));
+
+    $response->assertOk()->assertJsonCount(1, 'data');
+
+    expect($response->json('data.0.name'))->toBe('project');
+});
