@@ -37,3 +37,21 @@ it('should return the project', function () {
             ],
         ]);
 });
+
+it('should return forbidden when trying to access another organization project', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user->organizations()->attach($organization);
+
+    $project = Project::factory()->create();
+
+    $response = $this->actingAs($user)->getJson(route('api.projects.show', [
+        'project' => $project->id,
+    ]));
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
+        ]);
+});
