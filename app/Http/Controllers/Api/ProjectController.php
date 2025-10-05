@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Project\IndexProjectRequest;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Organization;
@@ -13,6 +14,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class ProjectController extends Controller
 {
+    public function index(Organization $organization, IndexProjectRequest $request)
+    {
+        $projects = $organization
+            ->projects()
+            ->with('user')
+            ->with('organization')
+            ->when($request->has('name'), function ($query) {
+                $name = request()->string('name');
+                $query->where('name', 'like', "%{$name}%");
+            })
+            ->paginate($request->integer('per_page', 10));
+
+        return ProjectResource::collection($projects);
+    }
+
     public function store(Organization $organization, StoreProjectRequest $request): JsonResource
     {
         $this->authorize('create', [Project::class, $organization]);

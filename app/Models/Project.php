@@ -25,11 +25,22 @@ final class Project extends Model
 
     public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this
+            ->belongsTo(Organization::class)
+            ->select([
+                'organizations.id',
+                'organizations.name',
+                'organizations.slug',
+            ]);
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this
+            ->belongsTo(User::class)
+            ->select([
+                'users.id',
+                'users.name',
+            ]);
     }
 }
