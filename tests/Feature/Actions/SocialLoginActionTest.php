@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\OauthProvider;
+use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
 
 it('should return a 404 for an invalid provider', function () {
@@ -32,10 +34,14 @@ it('should redirect to Google OAuth authorization page', function () {
 });
 
 it('logs in a user with Google OAuth', function () {
+    $provider = OauthProvider::factory()->create(['name' => 'google']);
     $googleUser = (object) [
-        'id' => '12345678',
+        'id' => '123456789',
         'name' => 'Google User',
         'email' => 'googleuser@example.com',
+        'token' => 'fake-token',
+        'refreshToken' => 'fake-refresh-token',
+        'expiresIn' => 3600,
     ];
 
     Socialite::shouldReceive('driver->stateless->user')
@@ -46,7 +52,18 @@ it('logs in a user with Google OAuth', function () {
     $response->assertRedirect();
 
     $this->assertDatabaseHas('users', [
-        'google_id' => '12345678',
+        'name' => 'Google User',
         'email' => 'googleuser@example.com',
     ]);
+
+    $provider = OauthProvider::where('name', 'google')->first();
+    $user = User::where('email', 'googleuser@example.com')->first();
+
+    $this->assertDatabaseHas('social_accounts', [
+        'user_id' => $user->id,
+        'provider_id' => $provider->id,
+        'provider_user_id' => '123456789',
+    ]);
+
+    $this->assertAuthenticatedAs($user);
 });

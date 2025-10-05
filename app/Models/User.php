@@ -53,6 +53,11 @@ final class User extends Authenticatable
         return $this->hasMany(EmailVerificationToken::class);
     }
 
+    public function socialAccounts()
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -64,10 +69,5 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function socialAccounts()
-    {
-        return $this->hasMany(SocialAccount::class);
     }
 }
