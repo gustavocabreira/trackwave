@@ -195,3 +195,43 @@ it('should be able to order the project list by name in descending order', funct
     expect($response->json('data.0.name'))->toBe('Second Project')
         ->and($response->json('data.1.name'))->toBe('First Project');
 });
+
+it('should be able to order the project list by id in ascending order', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'First Project']);
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'Second Project']);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'order_by' => 'id',
+        'direction' => 'asc',
+    ]));
+
+    $response->assertOk()->assertJsonCount(2, 'data');
+
+    expect($response->json('data.0.id'))->toBe(1)
+        ->and($response->json('data.1.id'))->toBe(2);
+});
+
+it('should be able to order the project list by id in descending order', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'First Project']);
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'Second Project']);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'order_by' => 'id',
+        'direction' => 'desc',
+    ]));
+
+    $response->assertOk()->assertJsonCount(2, 'data');
+
+    expect($response->json('data.0.id'))->toBe(2)
+        ->and($response->json('data.1.id'))->toBe(1);
+});
