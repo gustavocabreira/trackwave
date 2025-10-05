@@ -155,3 +155,23 @@ it('should be able to select how many projects per page', function () {
         ->and($response->json('meta.to'))->toBe(10)
         ->and($response->json('meta.total'))->toBe(15);
 });
+
+it('should be able to order the project list by name in ascending order', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'First Project']);
+    Project::factory()->create(['organization_id' => $organization->id, 'user_id' => $user->id, 'name' => 'Second Project']);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'order_by' => 'name',
+        'direction' => 'asc',
+    ]));
+
+    $response->assertOk()->assertJsonCount(2, 'data');
+
+    expect($response->json('data.0.name'))->toBe('First Project')
+        ->and($response->json('data.1.name'))->toBe('Second Project');
+});

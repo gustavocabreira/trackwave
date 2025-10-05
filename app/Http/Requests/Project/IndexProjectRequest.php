@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Project;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class IndexProjectRequest extends FormRequest
 {
@@ -27,6 +28,8 @@ final class IndexProjectRequest extends FormRequest
             'page' => ['sometimes', 'integer', 'min:1'],
             'name' => ['sometimes', 'string'],
             'per_page' => ['sometimes', 'integer', 'min:1'],
+            'order_by' => ['sometimes', 'string', 'required_with:direction', Rule::in(['id', 'name'])],
+            'direction' => ['sometimes', 'string', 'required_with:order_by', Rule::in(['asc', 'desc'])],
         ];
     }
 }

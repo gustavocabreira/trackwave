@@ -31,6 +31,11 @@ final class ProjectController extends Controller
                 $name = request()->string('name');
                 $query->where('name', 'like', "%{$name}%");
             })
+            ->when($request->has('order_by'), function ($query) {
+                $orderBy = request()->string('order_by');
+                $direction = request()->string('direction');
+                $query->orderBy($orderBy, $direction);
+            })
             ->paginate($request->integer('per_page', 10));
 
         return ProjectResource::collection($projects);
