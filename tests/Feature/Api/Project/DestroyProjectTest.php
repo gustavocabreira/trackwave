@@ -25,3 +25,21 @@ it('should delete the project', function () {
 
     $this->assertDatabaseCount('projects', 0);
 });
+
+it('should return forbidden when trying to delete another organization project', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user->organizations()->attach($organization);
+
+    $project = Project::factory()->create();
+
+    $response = $this->actingAs($user)->deleteJson(route('api.projects.destroy', [
+        'project' => $project->id,
+    ]));
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
+        ]);
+});
