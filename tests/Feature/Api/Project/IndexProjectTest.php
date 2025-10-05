@@ -254,3 +254,23 @@ it('should return unprocessable entity when the order_by is invalid', function (
             ],
         ]);
 });
+
+it('should return unprocessable entity when the direction is invalid', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'order_by' => 'name',
+        'direction' => 'invalid',
+    ]));
+
+    $response
+        ->assertUnprocessable()
+        ->assertJsonFragment([
+            'errors' => [
+                'direction' => ['The selected direction is invalid.'],
+            ],
+        ]);
+});
