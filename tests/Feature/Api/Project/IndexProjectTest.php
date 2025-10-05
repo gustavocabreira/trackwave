@@ -235,3 +235,22 @@ it('should be able to order the project list by id in descending order', functio
     expect($response->json('data.0.id'))->toBe(2)
         ->and($response->json('data.1.id'))->toBe(1);
 });
+
+it('should return unprocessable entity when the order_by is invalid', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'order_by' => 'invalid',
+    ]));
+
+    $response
+        ->assertUnprocessable()
+        ->assertJsonFragment([
+            'errors' => [
+                'order_by' => ['The selected order by is invalid.'],
+            ],
+        ]);
+});
