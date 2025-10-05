@@ -16,6 +16,9 @@ use Illuminate\Http\Response;
 
 final class ProjectController extends Controller
 {
+    /**
+     * Get a list of the organization's projects
+     */
     public function index(Organization $organization, IndexProjectRequest $request): JsonResource
     {
         $this->authorize('viewAny', [Project::class, $organization]);
@@ -33,6 +36,9 @@ final class ProjectController extends Controller
         return ProjectResource::collection($projects);
     }
 
+    /**
+     * Store a new project
+     */
     public function store(Organization $organization, StoreProjectRequest $request): JsonResource
     {
         $this->authorize('create', [Project::class, $organization]);
@@ -46,7 +52,10 @@ final class ProjectController extends Controller
         return new ProjectResource($project);
     }
 
-    public function show(Project $project)
+    /**
+     * Show a project
+     */
+    public function show(Project $project): JsonResource
     {
         $this->authorize('view', [Project::class, $project]);
 
@@ -55,6 +64,9 @@ final class ProjectController extends Controller
         return new ProjectResource($project);
     }
 
+    /**
+     * Update a project
+     */
     public function update(Project $project, UpdateProjectRequest $request): JsonResource
     {
         $this->authorize('update', [Project::class, $project]);
@@ -65,6 +77,9 @@ final class ProjectController extends Controller
         return new ProjectResource($project);
     }
 
+    /**
+     * Delete a project
+     */
     public function destroy(Project $project): Response
     {
         $this->authorize('delete', [Project::class, $project]);
