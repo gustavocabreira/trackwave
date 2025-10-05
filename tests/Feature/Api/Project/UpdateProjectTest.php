@@ -99,3 +99,43 @@ it('should return not found when trying to access a non-existing project', funct
 
     $response->assertNotFound();
 });
+
+it('should return forbidden when trying to update another organization project', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user->organizations()->attach($organization);
+
+    $project = Project::factory()->create();
+
+    $response = $this->actingAs($user)->patchJson(route('api.projects.update', [
+        'project' => $project->id,
+    ]), []);
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
+        ]);
+});
+
+it('should return forbidden if the user is not the owner of the organization', function () {
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+
+    $user->organizations()->attach($organization);
+    $anotherUser->organizations()->attach($organization);
+
+    $project = Project::factory()->create(['user_id' => $user->id, 'organization_id' => $organization->id]);
+
+    $response = $this->actingAs($anotherUser)->patchJson(route('api.projects.update', [
+        'project' => $project->id,
+    ]), []);
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
+        ]);
+});
