@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 use Laravel\Socialite\Facades\Socialite;
 
+it('should return a 404 for an invalid provider', function () {
+    $providerName = 'aws';
+    $response = $this->get(route('auth.redirect', ['provider' => $providerName]));
+
+    $response->assertNotFound();
+});
+
 it('should redirect to Google OAuth authorization page', function () {
-    $response = $this->get(route('api.auth.redirect', ['provider' => 'google']));
+    $response = $this->get(route('auth.redirect', ['provider' => 'google']));
     $response->assertRedirect();
 
     $redirectUrl = $response->headers->get('Location');
@@ -35,7 +42,7 @@ it('logs in a user with Google OAuth', function () {
         ->once()
         ->andReturn($googleUser);
 
-    $response = $this->get(route('api.auth.callback', ['provider' => 'google']));
+    $response = $this->get(route('auth.callback', ['provider' => 'google']));
     $response->assertRedirect();
 
     $this->assertDatabaseHas('users', [
