@@ -28,7 +28,7 @@ final class IndexProjectRequest extends FormRequest
             'page' => ['sometimes', 'integer', 'min:1'],
             'name' => ['sometimes', 'string'],
             'per_page' => ['sometimes', 'integer', 'min:1'],
-            'order_by' => ['sometimes', 'string', 'required_with:direction', Rule::in(['id', 'name'])],
+            'order_by' => ['string', 'required_with:direction', Rule::in(['id', 'name'])],
             'direction' => ['string', 'required_with:order_by', Rule::in(['asc', 'desc'])],
         ];
     }

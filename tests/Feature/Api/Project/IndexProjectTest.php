@@ -293,3 +293,22 @@ it('should return unprocessable entity when the order_by is provided without the
             ],
         ]);
 });
+
+it('should return unprocessable entity when the direction field is provided without the order_by', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'direction' => 'asc',
+    ]));
+
+    $response
+        ->assertUnprocessable()
+        ->assertJsonFragment([
+            'errors' => [
+                'order_by' => ['The order by field is required when direction is present.'],
+            ],
+        ]);
+});
