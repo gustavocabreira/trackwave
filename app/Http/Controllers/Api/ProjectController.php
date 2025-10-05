@@ -20,8 +20,6 @@ final class ProjectController extends Controller
             'organization_id' => $organization->id,
         ]);
 
-        dd($project);
-
         return new ProjectResource($project);
     }
 }
