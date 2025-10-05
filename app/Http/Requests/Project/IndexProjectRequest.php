@@ -29,7 +29,7 @@ final class IndexProjectRequest extends FormRequest
             'name' => ['sometimes', 'string'],
             'per_page' => ['sometimes', 'integer', 'min:1'],
             'order_by' => ['sometimes', 'string', 'required_with:direction', Rule::in(['id', 'name'])],
-            'direction' => ['sometimes', 'string', 'required_with:order_by', Rule::in(['asc', 'desc'])],
+            'direction' => ['string', 'required_with:order_by', Rule::in(['asc', 'desc'])],
         ];
     }
 }
