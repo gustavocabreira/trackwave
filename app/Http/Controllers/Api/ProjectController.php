@@ -12,6 +12,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Organization;
 use App\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 
 final class ProjectController extends Controller
 {
@@ -62,5 +63,14 @@ final class ProjectController extends Controller
         $project->update($request->validated());
 
         return new ProjectResource($project);
+    }
+
+    public function destroy(Project $project): Response
+    {
+        $this->authorize('delete', [Project::class, $project]);
+
+        $project->delete();
+
+        return response()->noContent();
     }
 }

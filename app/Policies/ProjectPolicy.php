@@ -49,7 +49,7 @@ final class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return false;
+        return $project->organization->owner_id === $user->id;
     }
 
     /**
