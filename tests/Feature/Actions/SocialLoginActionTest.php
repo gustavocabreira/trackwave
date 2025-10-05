@@ -34,7 +34,8 @@ it('should redirect to Google OAuth authorization page', function () {
 });
 
 it('logs in a user with Google OAuth', function () {
-    $provider = OauthProvider::factory()->create(['name' => 'google']);
+    $provider = OauthProvider::where('name', 'google')->first();
+
     $googleUser = (object) [
         'id' => '123456789',
         'name' => 'Google User',
