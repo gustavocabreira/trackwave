@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Actions\Auth\LoginAction;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
-class SocialRegisterController extends Controller
+final class SocialRegisterController extends Controller
 {
     public function redirectToProvider($provider): RedirectResponse
     {
@@ -20,6 +21,7 @@ class SocialRegisterController extends Controller
     {
         $accessToken = $action->execute($request);
         $redirectUrl = sprintf('%s/auth/callback?token=%s', config('app.frontend_url'), $accessToken['access_token']);
+
         return response()->redirectTo($redirectUrl);
     }
 }

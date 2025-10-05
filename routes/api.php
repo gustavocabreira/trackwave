@@ -18,10 +18,10 @@ Route::name('api.')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        
+
         Route::middleware(VerifiedEmailMiddleware::class)
             ->group(function () {
-        Route::get('me', fn () => request()->user())->name('me');
+                Route::get('me', fn () => request()->user())->name('me');
             });
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
