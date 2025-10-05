@@ -28,6 +28,7 @@ final class User extends Authenticatable
         'email',
         'password',
         'email_verified_at',
+        'google_id',
         'organization_id',
     ];
 
@@ -68,6 +69,11 @@ final class User extends Authenticatable
     public function verificationTokens(): HasMany
     {
         return $this->hasMany(EmailVerificationToken::class);
+    }
+
+    public function socialAccounts()
+    {
+        return $this->hasMany(SocialAccount::class);
     }
 
     /**
