@@ -41,7 +41,7 @@ final class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return false;
+        return $project->organization->owner_id === $user->id;
     }
 
     /**

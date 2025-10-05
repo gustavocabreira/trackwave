@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Project\IndexProjectRequest;
 use App\Http\Requests\Project\StoreProjectRequest;
+use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Organization;
 use App\Models\Project;
@@ -14,7 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class ProjectController extends Controller
 {
-    public function index(Organization $organization, IndexProjectRequest $request)
+    public function index(Organization $organization, IndexProjectRequest $request): JsonResource
     {
         $this->authorize('viewAny', [Project::class, $organization]);
 
@@ -49,6 +50,16 @@ final class ProjectController extends Controller
         $this->authorize('view', [Project::class, $project]);
 
         $project->load('organization', 'user');
+
+        return new ProjectResource($project);
+    }
+
+    public function update(Project $project, UpdateProjectRequest $request): JsonResource
+    {
+        $this->authorize('update', [Project::class, $project]);
+
+        $project->load('user');
+        $project->update($request->validated());
 
         return new ProjectResource($project);
     }
