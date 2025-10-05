@@ -31,6 +31,8 @@ jobs:
           sed -i "s#MAIL_PASSWORD=.*#MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}#" .env
           sed -i "s#MAIL_ENCRYPTION=.*#MAIL_ENCRYPTION=${{ secrets.MAIL_ENCRYPTION }}#" .env
           sed -i "s#MAIL_FROM_ADDRESS=.*#MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}#" .env
+          sed -i "s#GOOGLE_CLIENT_ID=.*#GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}#" .env
+          sed -i "s#GOOGLE_CLIENT_SECRET=.*#GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}#" .env
 
       - name: "Copiar arquivos para a VPS"
         uses: appleboy/scp-action@v0.1.7
