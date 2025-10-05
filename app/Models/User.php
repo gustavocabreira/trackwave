@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +29,7 @@ final class User extends Authenticatable
         'password',
         'email_verified_at',
         'google_id',
+        'organization_id',
     ];
 
     protected $casts = [
@@ -42,6 +45,21 @@ final class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class)
+            ->select([
+                'organizations.id',
+                'organizations.name',
+                'organizations.slug',
+            ]);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
 
     public function verificationToken(): HasOne
     {

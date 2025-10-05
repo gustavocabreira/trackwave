@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\RefreshVerificationTokenController;
 use App\Http\Controllers\Api\VerifyEmailController;
 use App\Http\Middleware\VerifiedEmailMiddleware;
@@ -22,9 +23,21 @@ Route::name('api.')->group(function () {
         Route::middleware(VerifiedEmailMiddleware::class)
             ->group(function () {
                 Route::get('me', fn () => request()->user())->name('me');
+
+                Route::prefix('organizations')
+                    ->name('organizations')
+                    ->controller(OrganizationController::class)
+                    ->group(function () {
+                        Route::get('', 'index')->name('.index');
+                        Route::get('{organization}', 'show')->name('.show');
+                        Route::post('', 'store')->name('.store');
+                        Route::patch('{organization}', 'update')->name('.update');
+                        Route::delete('{organization}', 'destroy')->name('.destroy');
+                    });
             });
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
+
     });
 
     Route::post('user/verify-email', VerifyEmailController::class)->name('user.verify-email');
