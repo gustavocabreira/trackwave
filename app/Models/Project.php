@@ -31,6 +31,7 @@ final class Project extends Model
                 'organizations.id',
                 'organizations.name',
                 'organizations.slug',
+                'organizations.owner_id',
             ]);
     }
 

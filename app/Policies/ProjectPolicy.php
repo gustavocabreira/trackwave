@@ -16,7 +16,7 @@ final class ProjectPolicy
     public function viewAny(User $user, Organization $organization): bool
     {
         return $organization->owner_id === $user->id
-            || $user->organizations->contains($organization);
+            || $organization->users()->where('users.id', $user->id)->exists();
     }
 
     /**
@@ -24,7 +24,8 @@ final class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return false;
+        return $project->organization->owner_id === $user->id
+            || $project->organization->users()->where('users.id', $user->id)->exists();
     }
 
     /**

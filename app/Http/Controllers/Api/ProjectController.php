@@ -43,4 +43,13 @@ final class ProjectController extends Controller
 
         return new ProjectResource($project);
     }
+
+    public function show(Project $project)
+    {
+        $this->authorize('view', [Project::class, $project]);
+
+        $project->load('organization', 'user');
+
+        return new ProjectResource($project);
+    }
 }
