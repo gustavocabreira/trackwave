@@ -9,14 +9,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::name('api.')
-    ->prefix('api')
+Route::prefix('auth/{provider}')
+    ->name('auth.')
+    ->whereIn('provider', ['google'])
     ->group(function () {
-        Route::prefix('auth/{provider}')
-            ->name('auth.')
-            ->whereIn('provider', ['google'])
-            ->group(function () {
-                Route::get('redirect', [SocialRegisterController::class, 'redirectToProvider'])->name('redirect');
-                Route::get('callback', [SocialRegisterController::class, 'callback'])->name('callback');
-            });
+        Route::get('redirect', [SocialRegisterController::class, 'redirectToProvider'])->name('redirect');
+        Route::get('callback', [SocialRegisterController::class, 'callback'])->name('callback');
     });
