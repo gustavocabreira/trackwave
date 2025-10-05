@@ -55,3 +55,13 @@ it('should return forbidden when trying to access another organization project',
             'message' => 'This action is unauthorized.',
         ]);
 });
+
+it('should return not found when trying to access a non-existing project', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->getJson(route('api.projects.show', [
+        'project' => str()->random(),
+    ]));
+
+    $response->assertNotFound();
+});
