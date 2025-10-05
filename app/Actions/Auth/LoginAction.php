@@ -14,19 +14,19 @@ final class LoginAction
     {
         $providerUser = Socialite::driver($request->provider)->stateless()->user();
 
-        $user = User::where('email', $providerUser->getEmail())->first();
+        $user = User::where('email', $providerUser->email)->first();
 
         if (! $user) {
             $user = User::query()->updateOrCreate([
-                'google_id' => $providerUser->getId(),
+                'google_id' => $providerUser->id,
             ], [
-                'name' => $providerUser->getName(),
-                'email' => $providerUser->getEmail(),
-                'google_id' => $providerUser->getId(),
+                'name' => $providerUser->name,
+                'email' => $providerUser->email,
+                'google_id' => $providerUser->id,
                 'email_verified_at' => now(),
             ]);
         } else {
-            $user->update(['google_id' => $providerUser->getId()]);
+            $user->update(['google_id' => $providerUser->id]);
         }
 
         Auth::login($user);

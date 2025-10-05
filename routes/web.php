@@ -5,6 +5,10 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Auth\SocialRegisterController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
 Route::name('api.')
     ->prefix('api')
     ->group(function () {
