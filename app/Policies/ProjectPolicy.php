@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use App\Models\Organization;
+use App\Models\Project;
+use App\Models\User;
+
+final class ProjectPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user, Organization $organization): bool
+    {
+        return $organization->owner_id === $user->id
+            || $organization->users()->where('users.id', $user->id)->exists();
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Project $project): bool
+    {
+        return $project->organization->owner_id === $user->id
+            || $project->organization->users()->where('users.id', $user->id)->exists();
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user, Organization $organization): bool
+    {
+        return $organization->owner_id === $user->id;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Project $project): bool
+    {
+        return $project->organization->owner_id === $user->id;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Project $project): bool
+    {
+        return $project->organization->owner_id === $user->id;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, Project $project): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, Project $project): bool
+    {
+        return false;
+    }
+}
