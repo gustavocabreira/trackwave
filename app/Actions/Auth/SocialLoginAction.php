@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
-final class LoginAction
+final class SocialLoginAction
 {
     public function execute($request): array
     {
