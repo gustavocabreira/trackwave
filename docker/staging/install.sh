@@ -15,10 +15,6 @@ while true; do
   esac
 done
 
-# prepara .env local e injeta APP_NAME
-cp -f .env.example .env
-sed -i "s|app_name|$APP_NAME|g" .env
-
 # sobe tudo (rebuilda a imagem da app caso mude USER_ID/GROUP_ID)
 docker compose up -d --build
 
