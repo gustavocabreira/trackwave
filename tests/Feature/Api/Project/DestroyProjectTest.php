@@ -43,3 +43,25 @@ it('should return forbidden when trying to delete another organization project',
             'message' => 'This action is unauthorized.',
         ]);
 });
+
+it('should return forbidden if the user is not the owner of the organization', function () {
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+
+    $user->organizations()->attach($organization);
+    $anotherUser->organizations()->attach($organization);
+
+    $project = Project::factory()->create(['user_id' => $user->id, 'organization_id' => $organization->id]);
+
+    $response = $this->actingAs($anotherUser)->deleteJson(route('api.projects.destroy', [
+        'project' => $project->id,
+    ]));
+
+    $response
+        ->assertForbidden()
+        ->assertJsonFragment([
+            'message' => 'This action is unauthorized.',
+        ]);
+});
