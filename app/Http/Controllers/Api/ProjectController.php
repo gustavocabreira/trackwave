@@ -16,6 +16,8 @@ final class ProjectController extends Controller
 {
     public function index(Organization $organization, IndexProjectRequest $request)
     {
+        $this->authorize('viewAny', [Project::class, $organization]);
+
         $projects = $organization
             ->projects()
             ->with('user')

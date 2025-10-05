@@ -13,9 +13,10 @@ final class ProjectPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, Organization $organization): bool
     {
-        return false;
+        return $organization->owner_id === $user->id
+            || $user->organizations->contains($organization);
     }
 
     /**

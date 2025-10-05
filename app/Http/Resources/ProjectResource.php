@@ -18,6 +18,8 @@ final class ProjectResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'organization_id' => $this->organization_id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
             'description' => $this->description,
             'organization' => $this->whenLoaded('organization', fn ($organization) => $organization->toArray($request)),
