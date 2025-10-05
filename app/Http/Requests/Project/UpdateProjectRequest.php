@@ -24,7 +24,7 @@ final class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'string', 'min:3', 'max:50'],
+            'name' => ['sometimes', 'string', 'min:3', 'max:100'],
             'description' => ['sometimes', 'string', 'min:3', 'max:255'],
         ];
     }
