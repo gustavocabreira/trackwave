@@ -8,7 +8,7 @@ use App\Models\User;
 
 it('should be able to store a project', function () {
     $user = User::factory()->create();
-    $organization = Organization::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
     $user->organizations()->attach($organization);
 
     $payload = Project::factory()->make()->toArray();
@@ -78,3 +78,17 @@ it('should return unprocessable entity when payload is invalid', function (array
             'errors' => $expectedErrors,
         ]);
 })->with('invalid_payload');
+
+test('only the owner can create a project', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create();
+    $user->organizations()->attach($organization);
+
+    $payload = Project::factory()->make()->toArray();
+
+    $response = $this->actingAs($user)->postJson(route('api.organizations.projects.store', [
+        'organization' => $organization->id,
+    ]), $payload);
+
+    $response->assertForbidden();
+});
