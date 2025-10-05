@@ -244,6 +244,7 @@ it('should return unprocessable entity when the order_by is invalid', function (
     $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
         'organization' => $organization->id,
         'order_by' => 'invalid',
+        'direction' => 'asc',
     ]));
 
     $response
