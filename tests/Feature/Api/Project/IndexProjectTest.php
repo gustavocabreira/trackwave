@@ -132,3 +132,26 @@ it('should be able to filter the project list by name', function () {
 
     expect($response->json('data.0.name'))->toBe('project');
 });
+
+it('should be able to select how many projects per page', function () {
+    $user = User::factory()->create();
+    $organization = Organization::factory()->create(['owner_id' => $user->id]);
+    $user->organizations()->attach($organization);
+
+    Project::factory()->count(15)->create(['organization_id' => $organization->id, 'user_id' => $user->id]);
+
+    $response = $this->actingAs($user)->getJson(route('api.organizations.projects.index', [
+        'organization' => $organization->id,
+        'page' => 2,
+        'per_page' => 5,
+    ]));
+
+    $response->assertOk()->assertJsonCount(5, 'data');
+
+    expect($response->json('meta.current_page'))->toBe(2)
+        ->and($response->json('meta.from'))->toBe(6)
+        ->and($response->json('meta.last_page'))->toBe(3)
+        ->and($response->json('meta.per_page'))->toBe(5)
+        ->and($response->json('meta.to'))->toBe(10)
+        ->and($response->json('meta.total'))->toBe(15);
+});
