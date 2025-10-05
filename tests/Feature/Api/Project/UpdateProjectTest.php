@@ -89,3 +89,13 @@ it('should return unprocessable entity when the updated project payload is inval
             'errors' => $expectedErrors,
         ]);
 })->with('invalid_payload');
+
+it('should return not found when trying to access a non-existing project', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->patchJson(route('api.projects.update', [
+        'project' => str()->random(),
+    ]), []);
+
+    $response->assertNotFound();
+});
