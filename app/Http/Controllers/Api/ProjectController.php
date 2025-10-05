@@ -17,7 +17,10 @@ final class ProjectController extends Controller
         $project = $organization->projects()->create([
             ...$request->validated(),
             'user_id' => auth()->user()->id,
+            'organization_id' => $organization->id,
         ]);
+
+        dd($project);
 
         return new ProjectResource($project);
     }

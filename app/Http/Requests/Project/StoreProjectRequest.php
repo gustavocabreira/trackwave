@@ -17,7 +17,7 @@ final class StoreProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:100'],
-            'description' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'min:3', 'max:255'],
         ];
     }
 }

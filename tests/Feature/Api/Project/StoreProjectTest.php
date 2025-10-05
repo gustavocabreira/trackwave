@@ -11,14 +11,13 @@ it('should be able to store a project', function () {
     $organization = Organization::factory()->create();
     $user->organizations()->attach($organization);
 
-    $payload = Project::factory()->make([
-        'organization_id' => $organization->id,
-        'user_id' => $user->id,
-    ])->toArray();
+    $payload = Project::factory()->make()->toArray();
 
-    $response = $this->actingAs($user)->postJson(route('api.organizations.projects.store', [
-        'organization' => $organization->id,
-    ]), $payload);
+    $response = $this
+        ->actingAs($user)
+        ->postJson(route('api.organizations.projects.store', [
+            'organization' => $organization->id,
+        ]), $payload);
 
     $response
         ->assertCreated()
