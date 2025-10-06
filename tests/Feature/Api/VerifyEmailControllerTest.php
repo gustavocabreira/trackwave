@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Actions\Auth\GenerateUserVerificationTokenAction;
 use App\Models\EmailVerificationToken;
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     $this->freezeTime();
@@ -17,7 +19,7 @@ it('should verify the email', function () {
 
     $token = GenerateUserVerificationTokenAction::execute($user);
 
-    $response = $this->postJson(route('api.user.verify-email'), [
+    $response = $this->postJson(route('api.user.verify-email.verify'), [
         'token' => $token,
     ]);
 
@@ -49,7 +51,7 @@ it('should return an error if the token is invalid', function () {
 
     $token = GenerateUserVerificationTokenAction::execute($user);
 
-    $response = $this->postJson(route('api.user.verify-email'), [
+    $response = $this->postJson(route('api.user.verify-email.verify'), [
         'token' => 'invalid_token',
     ]);
 
@@ -86,7 +88,7 @@ it('should return an error if the token has expired', function () {
         'used_at' => null,
     ]);
 
-    $response = $this->postJson(route('api.user.verify-email'), [
+    $response = $this->postJson(route('api.user.verify-email.verify'), [
         'token' => $token,
     ]);
 
@@ -122,7 +124,7 @@ it('should return an error if the token has already been used', function () {
         'used_at' => now(),
     ]);
 
-    $response = $this->postJson(route('api.user.verify-email'), [
+    $response = $this->postJson(route('api.user.verify-email.verify'), [
         'token' => $token,
     ]);
 
@@ -148,7 +150,7 @@ it('should return an error if the email has already been verified', function () 
 
     $token = GenerateUserVerificationTokenAction::execute($user);
 
-    $response = $this->postJson(route('api.user.verify-email'), [
+    $response = $this->postJson(route('api.user.verify-email.verify'), [
         'token' => $token,
     ]);
 
@@ -166,4 +168,32 @@ it('should return an error if the email has already been verified', function () 
     ]);
 
     $this->assertDatabaseCount('email_verification_tokens', 1);
+});
+
+it('should resend the email', function () {
+    Notification::fake();
+
+    $user = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    $token = GenerateUserVerificationTokenAction::execute($user);
+
+    $response = $this->actingAs($user)->postJson(route('api.user.verify-email.resend'));
+
+    $response
+        ->assertOk()
+        ->assertJsonFragment([
+            'message' => 'Email resent successfully.',
+        ]);
+
+    $this->assertDatabaseHas('email_verification_tokens', [
+        'user_id' => $user->id,
+        'token' => $token,
+        'expires_at' => now()->addHour(1),
+    ]);
+
+    $this->assertDatabaseCount('email_verification_tokens', 1);
+
+    Notification::assertSentTo($user, VerifyEmailNotification::class);
 });

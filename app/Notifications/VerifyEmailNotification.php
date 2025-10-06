@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Notifications;
 
-use App\Actions\Auth\GenerateUserVerificationTokenAction;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -38,11 +37,9 @@ final class VerifyEmailNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $token = GenerateUserVerificationTokenAction::execute($notifiable);
-
         $url = Uri::of(config('app.frontend_url'))
             ->withPath('/verify-email')
-            ->withQuery(['token' => $token])
+            ->withQuery(['token' => $notifiable->verificationToken->token])
             ->toStringable();
 
         return (new MailMessage)

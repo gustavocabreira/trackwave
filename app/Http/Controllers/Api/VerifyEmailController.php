@@ -7,13 +7,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VerifyEmailRequest;
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 final class VerifyEmailController extends Controller
 {
-    public function __invoke(VerifyEmailRequest $request)
+    /**
+     * Verify the email
+     */
+    public function verifyEmail(VerifyEmailRequest $request): Response
     {
         $validated = $request->validated();
 
@@ -51,6 +55,18 @@ final class VerifyEmailController extends Controller
 
         return response([
             'message' => 'Email verified successfully.',
+        ]);
+    }
+
+    /**
+     * Resend the email verification token to the user.
+     */
+    public function resendEmail(): Response
+    {
+        auth()->user()->notify(new VerifyEmailNotification);
+
+        return response([
+            'message' => 'Email resent successfully.',
         ]);
     }
 }
