@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\Notifications\VerifyEmailNotification;
+use Illuminate\Support\Facades\Auth;
 
 final class RegisterController extends Controller
 {
@@ -18,6 +19,9 @@ final class RegisterController extends Controller
         $user = User::query()->create($request->only('name', 'email', 'password'));
 
         $user->notify(new VerifyEmailNotification);
+
+        Auth::login($user);
+        auth()->user()->createToken('auth_token');
 
         return $user->toResource();
     }
