@@ -12,7 +12,7 @@ jobs:
 
       - name: "Copy .env.example to .env"
         run: |
-          cp .env.example .env
+          cp ./docker/staging/.env.example .env
 
       - name: "Update .env values"
         run: |
