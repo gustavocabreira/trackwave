@@ -35,8 +35,9 @@ Route::name('api.')->group(function () {
 
         Route::post('auth/logout', LogoutController::class)->name('api.auth.logout');
 
+        Route::post('user/verify-email/resend', [VerifyEmailController::class, 'resendEmail'])->name('user.verify-email.resend');
     });
 
-    Route::post('user/verify-email', VerifyEmailController::class)->name('user.verify-email');
+    Route::post('user/verify-email', [VerifyEmailController::class, 'verifyEmail'])->name('user.verify-email.verify');
     Route::post('user/refresh-verification-token', RefreshVerificationTokenController::class)->name('user.refresh-verification-token');
 });

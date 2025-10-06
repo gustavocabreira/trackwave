@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Auth\GenerateUserVerificationTokenAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RefreshVerificationTokenRequest;
 use App\Models\User;
@@ -36,6 +37,8 @@ final class RefreshVerificationTokenController extends Controller
         abort_if($user->email_verified_at, Response::HTTP_UNPROCESSABLE_ENTITY, 'The email has already been verified.');
 
         abort_if($user->verificationToken->expires_at->isFuture(), Response::HTTP_UNPROCESSABLE_ENTITY, 'The token has not expired yet.');
+
+        GenerateUserVerificationTokenAction::execute($user);
 
         $user->notify(new VerifyEmailNotification);
 
